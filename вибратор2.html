@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Critical Error</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Канвас для матрицы на весь экран */
+        #matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Контейнер с кнопкой поверх матрицы */
+        .content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #0f0;
+            text-align: center;
+        }
+
+        .btn {
+            border: 2px solid #0f0;
+            background: rgba(0, 0, 0, 0.8);
+            color: #0f0;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px #0f0;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #0f0;
+            color: black;
+        }
+
+        .warning {
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 5px #f00;
+            color: #ff4d4d;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+
+    <div class="content">
+        <div class="warning">ОБНАРУЖЕНА УГРОЗА БЕЗОПАСНОСТИ</div>
+        <div class="btn" onclick="startPrank()">Устранить угрозу</div>
+    </div>
+
+    <script>
+        // --- ЭФФЕКТ МАТРИЦЫ ---
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#0F0";
+            ctx.font = fontSize + "px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 35);
+
+        // --- ФУНКЦИЯ ПРАНКА ---
+        function startPrank() {
+            // Пытаемся зайти в полный экран
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+
+            // Вибрация (для Android)
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 500]);
+            }
+
+            // Бесконечный цикл алертов
+            setTimeout(() => {
+                while(true) {
+                    alert("⚠️ КРИТИЧЕСКАЯ ОШИБКА: Доступ к памяти заблокирован!");
+                    alert("Удаление системных файлов... 1%... 5%... 12%...");
+                    alert("Процессор перегрет! Охладите устройство в холодильнике!");
+                    if (!confirm("Вы уверены, что хотите остановить уничтожение данных?")) {
+                        alert("Процесс необратим.");
+                    }
+                }
+            }, 500);
+        }
+
+// Подстройка под размер экрана при повороте телефона
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
